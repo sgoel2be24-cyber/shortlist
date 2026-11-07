@@ -27,6 +27,7 @@ clerk: ✅ README ✅ run steps ❌ LICENSE           index.js loads ./lib/polic
                                            judge (human): pass S-2
 clerk: decided, kind note, no scores ◄──── clerk:  scoreboard updated · participant notified
 ```
+
 ---
 
 ## From a real run (quoted from the Mattermost rooms, lightly trimmed)
