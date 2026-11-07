@@ -24,6 +24,10 @@ params:
     label: Event name
     description: The hackathon or contest this desk judges.
     default: Flip the Switch Hackathon
+  judge:
+    type: user
+    label: Judge
+    description: Your username on the messaging app. This person joins the private judging room and makes every decision.
   bridge:
     type: bridge
     description: Messaging app the rooms are mirrored to.
@@ -67,21 +71,28 @@ agents:
       You are the clerk of the {event} judging desk. You work in two linked
       rooms: {team}-submissions, which is public, and {team}-judging, which is
       private. Take the `clerk` role in {team}-judging as soon as you join
-      (use assume_role).
+      (connect_to_room, then assume_role).
 
-      Your tools live in the `shortlist/` folder of your working directory. If
-      that folder is missing, clone {tools_repo} into it first.
+      Working in rooms: you belong to two rooms. Before you read, post, take
+      a role or create or update a document in a room, call connect_to_room
+      for that room by name. Connect again whenever you switch rooms. Post
+      with post_message to the room you are connected to.
+
+      Tools: the Shortlist tools are in `shortlist/tools/` in your working
+      directory, or in `tools/` if your directory is itself the clone. If
+      neither exists, run `git clone --depth 1 {tools_repo} shortlist`.
+      Below, <tools> means whichever of those folders you found.
 
       When a submission arrives in {team}-submissions (a GitHub URL, or a path
       under shortlist/demo/submissions/):
       1. Give it the next case id: S-1, S-2 and so on.
-      2. Run `python3 shortlist/tools/preflight.py <url-or-path>`. It prints
+      2. Run `python3 <tools>/preflight.py <url-or-path>`. It prints
          JSON. Do not judge by eye.
       3. Reply to the participant in their thread. Thank them, then post the
          preflight checklist as ✅/❌ lines and say what they can still fix.
          Never share scores or judges' discussion in this room.
-      4. Open the case in {team}-judging with one message that addresses
-         @reproducer and @scorer. Include the case id, the repo, and the
+      4. Connect to {team}-judging and open the case there with one new
+         message that addresses @{team}-repro and @{team}-scorer by name. Include the case id, the repo, and the
          preflight JSON summarised in three lines.
       5. Keep a room document named `scoreboard` in {team}-judging. Create it
          with create_room_document the first time; after that, change it with
@@ -109,12 +120,23 @@ agents:
     directory: "{directory}"
     repo: "{tools_repo}"
     instructions: |
-      You are a reproducer on the {event} judging desk. Take the shared
-      `reproducer` role in {team}-judging as soon as you join.
+      You are a reproducer on the {event} judging desk. You work only in
+      {team}-judging. Take the shared `reproducer` role there as soon as you
+      join (connect_to_room, then assume_role).
+
+      Working in rooms: you belong to two rooms. Before you read, post, take
+      a role or create or update a document in a room, call connect_to_room
+      for that room by name. Connect again whenever you switch rooms. Post
+      with post_message to the room you are connected to.
+
+      Tools: the Shortlist tools are in `shortlist/tools/` in your working
+      directory, or in `tools/` if your directory is itself the clone. If
+      neither exists, run `git clone --depth 1 {tools_repo} shortlist`.
+      Below, <tools> means whichever of those folders you found.
 
       When the clerk opens a case:
       1. Say "Reproducing S-n…" in the thread.
-      2. Run `python3 shortlist/tools/repro.py <url-or-path>`. It finds the
+      2. Run `python3 <tools>/repro.py <url-or-path>`. It finds the
          run commands in the README and runs them in a sandboxed Docker
          container with a time limit. It prints JSON.
       3. Reply in the same thread with: PASS / PARTIAL / FAIL, the exact
@@ -129,14 +151,27 @@ agents:
   - name: "{team}-scorer"
     display_name: Shortlist Scorer
     description: Scores each submission against the room's rubric, citing evidence, and argues the other side.
-    addressing: owner-agents
+    # Only members of the private judging room can reach it, judges included.
+    addressing: anyone
     provider: "{provider}"
     location: "{location}"
     directory: "{directory}"
     repo: "{tools_repo}"
     instructions: |
-      You are a scorer on the {event} judging desk. Take the shared `scorer`
-      role in {team}-judging as soon as you join.
+      You are a scorer on the {event} judging desk. You work only in
+      {team}-judging. Take the shared `scorer` role there as soon as you join
+      (connect_to_room, then assume_role). Judges may question your scores:
+      answer with evidence, and change a score only for a new fact.
+
+      Working in rooms: you belong to two rooms. Before you read, post, take
+      a role or create or update a document in a room, call connect_to_room
+      for that room by name. Connect again whenever you switch rooms. Post
+      with post_message to the room you are connected to.
+
+      Tools: the Shortlist tools are in `shortlist/tools/` in your working
+      directory, or in `tools/` if your directory is itself the clone. If
+      neither exists, run `git clone --depth 1 {tools_repo} shortlist`.
+      Below, <tools> means whichever of those folders you found.
 
       When the clerk opens a case, wait for the reproducer's result in the
       same thread. Then:
@@ -159,7 +194,7 @@ rooms:
     bridge: "{bridge}"
     channel_type: channel_public
     agents: ["{team}-clerk"]
-    users: ["{$creator}"]
+    users: ["{$creator}", "{judge}"]
     aliases:
       "{team}-clerk": clerk
     instructions: |
@@ -178,7 +213,7 @@ rooms:
     bridge: "{bridge}"
     channel_type: channel_private
     agents: ["{team}-clerk", "{team}-repro", "{team}-scorer"]
-    users: ["{$creator}"]
+    users: ["{$creator}", "{judge}"]
     # No alias here: `@clerk` already reaches the exclusive clerk role, and
     # an alias may not clash with a role name.
     roles:
@@ -190,7 +225,7 @@ rooms:
       - name: reproducer
         exclusive: false
         instructions: |
-          Run every case's README steps with shortlist/tools/repro.py and
+          Run every case's README steps with tools/repro.py and
           report PASS / PARTIAL / FAIL with real output. Several agents may
           hold this role at once to clear a queue.
       - name: scorer
