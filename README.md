@@ -50,7 +50,7 @@ Without Switch there is no product. These are the Switch features Shortlist uses
 | Agent | Role | Addressable by | Does |
 |---|---|---|---|
 | `shortlist-clerk` | `clerk` (exclusive) | anyone | Assigns case ids, runs `tools/preflight.py`, replies to the participant, opens the case for the reviewers, keeps the `scoreboard` doc, and relays **human** verdicts back to the public room. |
-| `shortlist-repro` | `reproducer` (shared) | members of the private judging room | Runs `tools/repro.py`, which pulls the README's run commands and executes them in a locked-down Docker container. Reports PASS / PARTIAL / FAIL with real output. |
+| `shortlist-repro` | `reproducer` (shared) | members of the private judging room | Files a job for the **sandbox runner** (`tools/runner.py`), which runs `tools/repro.py`. That pulls the README's run commands and executes them in a locked-down Docker container. Reports PASS / PARTIAL / FAIL with real output. |
 | `shortlist-scorer` | `scorer` (shared) | members of the private judging room | Scores against the `rubric` document. Every line needs evidence (a file, a line or the repro output), plus a devil's-advocate counterpoint. |
 
 The human judge is the deployer, and a member of `shortlist-judging`.
@@ -85,6 +85,10 @@ and [Claude Code](https://claude.com/claude-code) signed in. Codex or OpenCode a
 2. **Import the template.** In Switch Console go to **Templates**, then **Import template**, and choose
    [`shortlist.template.yaml`](shortlist.template.yaml). Then click **Use**, enter your Mattermost username as **Judge**, and click **Create**.
 3. Switch creates the agents, rooms, roles and docs, then posts the kickoffs. Each agent takes its role and says hello.
+   Start the sandbox runner in a terminal and leave it running:
+   ```bash
+   python3 tools/runner.py
+   ```
 4. **Submit something.** In Mattermost, post one of these in `shortlist-submissions`:
    ```
    @clerk please review https://github.com/sgoel2be24-cyber/shortlist/tree/main/demo/submissions/standup-relay
@@ -117,6 +121,12 @@ Both are standard-library Python 3.9+ and print JSON. `repro.py` needs Docker.
 
 ## Safety
 
+**Agents never execute submission code.** The reproducer only writes a job
+file. A separate sandbox runner (`python3 tools/runner.py`), started by a
+human, runs the code in Docker and writes the result back. This splits the
+process that reads untrusted text (the agent) from the one that runs
+untrusted code (the runner). The runner accepts only GitHub URLs as targets.
+
 Submissions are untrusted code and untrusted text.
 
 - **The code runs only in Docker:** `--rm`, 1 CPU, 1 GB RAM, 256 PIDs,
@@ -135,6 +145,7 @@ Submissions are untrusted code and untrusted text.
 shortlist.template.yaml    # the whole desk, one Switch template
 tools/preflight.py         # static submission checks → JSON
 tools/repro.py             # README run steps in a sandboxed container → JSON
+tools/runner.py            # sandbox runner: the only thing that executes submission code
 demo/submissions/*         # three sample entries for the demo
 BLOG.md                    # write-up (Best Blog side track)
 ```
