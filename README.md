@@ -18,15 +18,40 @@ status update in their thread.
 There's no new app to log into. Everyone works in the chat they already use.
 
 ```
-#shortlist-submissions (public)            #shortlist-judging (private)
+#desk-submissions (public)                 #desk-judging (private)
 ──────────────────────────────            ─────────────────────────────────────────
-participant: here's our repo →             clerk:  📂 S-1 standup-relay, preflight 7/7
-clerk: ✅ README ✅ video ✅ license            @reproducer @scorer
-       received as S-1, under review       repro:  PASS · python3 relay.py --selftest (exit 0)
-                                           scorer: 86/100 · table + evidence + devil's advocate
-                                           judge (human): shortlist S-1
-clerk: 🎉 S-1 has been shortlisted   ◄──── clerk:  scoreboard updated · participant notified
+participant: here's our repo →             clerk:  New case S-2, preflight 6/7. Watch out:
+clerk: ✅ README ✅ run steps ❌ LICENSE           index.js loads ./lib/policy, which isn't there
+       logged as S-2, under review         repro:  (sandbox runner) FAIL · MODULE_NOT_FOUND
+                                           scorer: 18/100 · table + evidence + devil's advocate
+                                           judge (human): pass S-2
+clerk: decided, kind note, no scores ◄──── clerk:  scoreboard updated · participant notified
 ```
+---
+
+## From a real run (quoted from the Mattermost rooms, lightly trimmed)
+
+These come from the run recorded for the demo (three sample submissions):
+
+| Case | Sandbox runner | Scorer's recommendation | What the agents caught |
+|---|---|---|---|
+| S-1 Standup Relay | **PASS** (`python3 relay.py --selftest`, exit 0) | 39/100 | The README claimed a blocker-hunter agent and a `digest` document that didn't exist in the repo, and the video link didn't resolve. |
+| S-2 Deploy Buddy | **FAIL** (`MODULE_NOT_FOUND`, `lib/policy.js` never committed) | 18/100 | Switch appeared only in a code comment, and the Loom link returned 404. |
+| S-3 SynergyAI | **FAIL** (no run steps) | 4/100 | Buzzwords, a single `print`, no Switch. |
+
+**The agents didn't take the easy way out:**
+
+- **They didn't fake results.** When its permission check blocked the run, the reproducer said:
+  *"I haven't worked around the block and I'm not guessing a result."*
+  That's why the sandbox runner exists: agents file jobs, and only the runner executes code.
+- **Switch's access rules held.** An unlinked chat account asked for an owner-only `!reset`, and the clerk refused to relay it:
+  *"If an agent sends it, it's refused… I shouldn't pass the request on in my name."*
+- **The scorer noticed a change after scoring.** *"S-1 changed after it was scored… My 39/100 stands for the version that was reproduced."*
+- **The clerk flagged a conflict of interest.** *"shikhar also submitted S-1… another judge may want to make the final call on it."*
+- **Humans decided and participants heard back kindly, with no scores leaked:**
+  *"the judges have decided not to take it forward this round… A chat-approved rollback is a real need, and we hope you keep going with it."*
+
+(After the run, Standup Relay was fixed so that everything its README claims is real. That's the version in `demo/`.)
 
 ---
 
