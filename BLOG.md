@@ -29,12 +29,21 @@ Import it in Switch Console, click **Use**, and the desk is open.
 3. The clerk opens case `S-1` in the private room and addresses
    `@reproducer` and `@scorer`. These are *roles*, not agent names, so adding
    a second reproducer agent to clear a backlog takes no configuration.
-4. The **reproducer** pulls the README's run commands and runs them in a
-   locked-down Docker container. It posts PASS or FAIL with the real output.
+4. The **reproducer** never runs submission code. It files a job, and a
+   human-started **sandbox runner** runs the README's commands in a locked-down
+   Docker container. The reproducer then posts PASS or FAIL with the real output.
 5. The **scorer** grades against the rubric document, with evidence for every
    line and a devil's-advocate note against its own score.
 6. A **human judge** types `@clerk shortlist S-1`. The clerk updates the
    `scoreboard` document and posts a status update to the participant.
+
+## What happened in the real run
+
+The scorer gave **65, 18 and 4** out of 100 to the three sample entries. It also
+caught things a checklist misses: README claims with no code behind them, a Loom
+link that returns 404, and a commit pushed *after* scoring. When a permission
+check blocked the reproducer, it said *"I'm not guessing a result"* and stopped.
+That moment is why the sandbox runner exists.
 
 ## What surprised me about Switch
 
