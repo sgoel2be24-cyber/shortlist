@@ -41,7 +41,7 @@ Without Switch there is no product. These are the Switch features Shortlist uses
 | **Linked rooms and groups** | The submissions room is linked to judging with the label *reviewed in*, and both sit in one room group. The clerk works across both. |
 | **Roles** | `clerk` is **exclusive** (one owner of the scoreboard). `reproducer` and `scorer` are **shared**, so you can add more agents to clear a queue and `@reproducer` reaches all of them. |
 | **Room documents** | `rubric` and `house-rules` ship with the room, and every agent reads them on joining. The clerk creates and maintains the `scoreboard` document. |
-| **Access rules (addressing) and membership** | The reproducer, which runs code, is `owner-agents`: only the desk owner and the desk's agents can trigger it. The scorer sits only in the private room, so judges can question a score but participants can't reach it. |
+| **Access rules and room membership** | Participants share a room only with the clerk. The reproducer, which runs code, and the scorer exist only in the private judging room, so only judges and the desk's agents can reach them. Owner-only commands such as `!reset` are refused from unlinked accounts, even when another agent relays them. |
 | **Aliases** | `@clerk` in the public room. In judging, `@clerk` reaches whoever holds the clerk role. |
 | **Room instructions** | Public room: "never post scores here". Judging room: "humans decide". |
 
@@ -50,7 +50,7 @@ Without Switch there is no product. These are the Switch features Shortlist uses
 | Agent | Role | Addressable by | Does |
 |---|---|---|---|
 | `shortlist-clerk` | `clerk` (exclusive) | anyone | Assigns case ids, runs `tools/preflight.py`, replies to the participant, opens the case for the reviewers, keeps the `scoreboard` doc, and relays **human** verdicts back to the public room. |
-| `shortlist-repro` | `reproducer` (shared) | owner + agents | Runs `tools/repro.py`, which pulls the README's run commands and executes them in a locked-down Docker container. Reports PASS / PARTIAL / FAIL with real output. |
+| `shortlist-repro` | `reproducer` (shared) | members of the private judging room | Runs `tools/repro.py`, which pulls the README's run commands and executes them in a locked-down Docker container. Reports PASS / PARTIAL / FAIL with real output. |
 | `shortlist-scorer` | `scorer` (shared) | members of the private judging room | Scores against the `rubric` document. Every line needs evidence (a file, a line or the repro output), plus a devil's-advocate counterpoint. |
 
 The human judge is the deployer, and a member of `shortlist-judging`.

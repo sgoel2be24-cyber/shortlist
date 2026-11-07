@@ -114,7 +114,8 @@ agents:
   - name: "{team}-repro"
     display_name: Shortlist Repro
     description: Clones each submission and runs its README steps in a throwaway Docker container.
-    addressing: owner-agents
+    # Only members of the private judging room can reach it. Participants never can.
+    addressing: anyone
     provider: "{provider}"
     location: "{location}"
     directory: "{directory}"
