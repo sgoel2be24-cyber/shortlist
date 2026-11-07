@@ -42,7 +42,7 @@ Without Switch there is no product. These are the Switch features Shortlist uses
 | **Roles** | `clerk` is **exclusive** (one owner of the scoreboard). `reproducer` and `scorer` are **shared**, so you can add more agents to clear a queue and `@reproducer` reaches all of them. |
 | **Room documents** | `rubric` and `house-rules` ship with the room, and every agent reads them on joining. The clerk creates and maintains the `scoreboard` document. |
 | **Access rules (addressing)** | Only the clerk is `anyone`-addressable. The reproducer and scorer are `owner-agents`, so participants can't steer the agents that run code or assign scores. |
-| **Aliases** | `@clerk` in both rooms. |
+| **Aliases** | `@clerk` in the public room. In judging, `@clerk` reaches whoever holds the clerk role. |
 | **Room instructions** | Public room: "never post scores here". Judging room: "humans decide". |
 
 ## The agents

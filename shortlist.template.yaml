@@ -179,8 +179,8 @@ rooms:
     channel_type: channel_private
     agents: ["{team}-clerk", "{team}-repro", "{team}-scorer"]
     users: ["{$creator}"]
-    aliases:
-      "{team}-clerk": clerk
+    # No alias here: `@clerk` already reaches the exclusive clerk role, and
+    # an alias may not clash with a role name.
     roles:
       - name: clerk
         exclusive: true
