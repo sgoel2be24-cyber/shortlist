@@ -1,0 +1,6 @@
+{
+  "name": "deploy-buddy",
+  "version": "0.1.0",
+  "scripts": { "test": "node test/rollback.test.js" },
+  "dependencies": {}
+}

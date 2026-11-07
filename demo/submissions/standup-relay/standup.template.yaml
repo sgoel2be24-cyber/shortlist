@@ -1,0 +1,19 @@
+version: 1
+params:
+  team: {type: string, default: standup}
+  provider: {type: provider, default: [claude], input: advanced}
+  location: {type: location, default: local, input: advanced}
+  directory: {type: directory, default: "{$agents_dir}/{agent}", input: advanced}
+agents:
+  - name: "{team}-summariser"
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{directory}"
+    instructions: Post a daily digest of standup updates using relay.py.
+room:
+  name: "{team}-room"
+  description: Async standups across time zones
+  agents: ["{team}-summariser"]
+  users: ["{$creator}"]
+  roles:
+    - {name: summariser, exclusive: true, instructions: Write the digest document daily.}
