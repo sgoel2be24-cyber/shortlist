@@ -1,0 +1,1 @@
+{"permissions":{"allow":["Bash(python3 tools/preflight.py:*)","Bash(python3 tools/repro.py:*)","Bash(python3 shortlist/tools/preflight.py:*)","Bash(python3 shortlist/tools/repro.py:*)","Bash(git clone --depth 1:*)"]}}
