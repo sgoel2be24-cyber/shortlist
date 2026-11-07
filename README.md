@@ -115,7 +115,7 @@ Both are standard-library Python 3.9+ and print JSON. `repro.py` needs Docker.
 
 | Sample | What it's for | Expected result |
 |---|---|---|
-| `standup-relay` | A strong entry: runs, links a video, ships a Switch template | preflight 7/7 · **PASS** · high score |
+| `standup-relay` | A strong entry: runs, has error handling, and its Switch template builds everything the README claims (but no video yet) | preflight 6/7 · **PASS** · highest score |
 | `deploy-buddy` | A good idea with a broken build (`lib/policy.js` was never committed) | preflight 6/7 · **FAIL**, `MODULE_NOT_FOUND` |
 | `synergy-ai` | Buzzwords, no run steps, no video | preflight 3/7 · **FAIL**, no commands · low score |
 

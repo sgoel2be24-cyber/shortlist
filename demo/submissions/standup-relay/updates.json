@@ -1,0 +1,6 @@
+[
+  {"who": "asha", "region": "IST", "did": "Shipped login page", "next": "Password reset", "blocker": null},
+  {"who": "ben", "region": "GMT", "did": "Reviewing PR #42", "next": "Merge PR #42", "blocker": {"waiting_on": "priya", "what": "API keys from ops"}},
+  {"who": "chen", "region": "PST", "did": "Fixing flaky test", "next": "CI cache", "blocker": null},
+  {"who": "dev", "region": "IST", "did": "Load-tested search", "next": "Tune indexes", "blocker": {"waiting_on": "chen", "what": "staging DB access"}}
+]

@@ -1,19 +1,44 @@
 version: 1
 params:
-  team: {type: string, default: standup}
-  provider: {type: provider, default: [claude], input: advanced}
+  team: {type: string, default: standup, pattern: "[a-z][a-z0-9-]*"}
+  bridge: {type: bridge, default: [$first]}
+  provider: {type: provider, default: [claude, codex, opencode], input: advanced}
   location: {type: location, default: local, input: advanced}
   directory: {type: directory, default: "{$agents_dir}/{agent}", input: advanced}
 agents:
   - name: "{team}-summariser"
+    addressing: anyone
     provider: "{provider}"
     location: "{location}"
     directory: "{directory}"
-    instructions: Post a daily digest of standup updates using relay.py.
+    instructions: |
+      Take the summariser role. Collect today's updates from the room into
+      updates.json, run `python3 relay.py digest updates.json` and replace the
+      `digest` room document with the output at each region's 9:00.
+  - name: "{team}-blocker-hunter"
+    addressing: anyone
+    provider: "{provider}"
+    location: "{location}"
+    directory: "{directory}"
+    instructions: |
+      Take the blocker-hunter role. After each digest, run
+      `python3 relay.py blockers updates.json` and post each line in the room
+      so the person who can unblock gets pinged.
 room:
   name: "{team}-room"
   description: Async standups across time zones
-  agents: ["{team}-summariser"]
+  bridge: "{bridge}"
+  agents: ["{team}-summariser", "{team}-blocker-hunter"]
   users: ["{$creator}"]
+  instructions: |
+    Standup format, one message per person per day:
+    did: <what you finished> / next: <what is next> / blocker: <who you wait on and for what, or none>
   roles:
-    - {name: summariser, exclusive: true, instructions: Write the digest document daily.}
+    - {name: summariser, exclusive: true, instructions: Own the daily digest document.}
+    - {name: blocker-hunter, exclusive: false, instructions: Ping whoever can unblock each blocker.}
+  docs:
+    - name: digest
+      description: Today's standup digest, rewritten by the summariser.
+      instructions: Read this instead of scrolling the room.
+      content: "No digest yet."
+kickoff: "@{team}-summariser @{team}-blocker-hunter take your roles and say hi in one line."
