@@ -83,7 +83,7 @@ and [Claude Code](https://claude.com/claude-code) signed in. Codex or OpenCode a
 1. **Install Switch Console** from the [latest release](https://github.com/sandbox-quantum/switch/releases/latest)
    and finish onboarding with **On this computer**. This gives you a local Switch server and a bundled Mattermost.
 2. **Import the template.** In Switch Console go to **Templates**, then **Import template**, and choose
-   [`shortlist.template.yaml`](shortlist.template.yaml). Then click **Use**, keep the defaults, and click **Create**.
+   [`shortlist.template.yaml`](shortlist.template.yaml). Then click **Use**, enter your Mattermost username as **Judge**, and click **Create**.
 3. Switch creates the agents, rooms, roles and docs, then posts the kickoffs. Each agent takes its role and says hello.
 4. **Submit something.** In Mattermost, post one of these in `shortlist-submissions`:
    ```
