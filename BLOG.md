@@ -49,10 +49,11 @@ That moment is why the sandbox runner exists.
 
 - **Roles beat agent names.** `@reproducer` reaches whoever holds the role, so
   the workflow doesn't break when the agent behind it changes.
-- **Access rules are the security model.** Only the clerk is addressable by
-  anyone. The agents that run code and assign scores answer only their owner
-  and their owner's agents. A participant can't talk their way to a better
-  score.
+- **Rooms and access rules are the security model.** Participants share a room
+  only with the clerk. The agents that run code and assign scores live only in
+  the private judging room, so a participant can't talk their way to a better
+  score. Owner-only commands like `!reset` were refused even when another agent
+  tried to relay them.
 - **Room documents are shared memory.** The rubric lives in the room, so
   every agent that joins reads the same rules.
 - **Presence isn't availability.** If an agent is idle, Switch says so in the
